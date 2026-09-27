@@ -1,1 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fewby Tap Challenge</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #07090c;
+      color: white;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 55px;
+      height: 55px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #168cff, #18e879);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 900;
+      color: #071017;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .subtitle {
+      color: #aeb8c4;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: #11161c;
+      border: 1px solid #25313d;
+      border-radius: 24px;
+      padding: 22px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: #0b1015;
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+    }
+
+    .stat span {
+      color: #9ba7b4;
+      font-size: 12px;
+    }
+
+    #gameArea {
+      height: 360px;
+      position: relative;
+      background: radial-gradient(circle at 50% 30%, #10243a, #080b0f 70%);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #20313f;
+    }
+
+    #target {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #168cff, #18e879);
+      box-shadow: 0 0 25px #168cffaa;
+      cursor: pointer;
+      display: none;
+      font-size: 30px;
+      font-weight: bold;
+      color: #061016;
+    }
+
+    #target:active {
+      transform: scale(0.9);
+    }
+
+    .start {
+      width: 100%;
+      margin-top: 16px;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #168cff, #18e879);
+      color: #061016;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    #message {
+      text-align: center;
+      color: #c8d2dd;
+      margin: 12px 0 0;
+    }
+
+    .footer {
+      text-align: center;
+      color: #778493;
+      font-size: 12px;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="header">
+      <div class="logo">F</div>
+
+      <div>
+        <h1>Fewby Tap Challenge</h1>
+        <div class="subtitle">A Fewby Chats mini-game</div>
+      </div>
+    </div>
+
+    <div class="card">
+
+      <div class="stats">
+
+        <div class="stat">
+          <strong id="score">0</strong>
+          <span>Score</span>
+        </div>
+
+        <div class="stat">
+          <strong id="time">20</strong>
+          <span>Seconds</span>
+        </div>
+
+        <div class="stat">
+          <strong id="best">0</strong>
+          <span>Best</span>
+        </div>
+
+      </div>
+
+      <div id="gameArea">
+        <button id="target">F</button>
+      </div>
+
+      <p id="message">
+        Press Start, then tap the glowing F as quickly as you can.
+      </p>
+
+      <button class="start" id="startButton">
+        Start Game
+      </button>
+
+      <div class="footer">
+        Fewby Chats • Play • Share • Enjoy
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    const gameArea = document.getElementById("gameArea");
+    const target = document.getElementById("target");
+
+    const scoreDisplay = document.getElementById("score");
+    const timeDisplay = document.getElementById("time");
+    const bestDisplay = document.getElementById("best");
+
+    const message = document.getElementById("message");
+    const startButton = document.getElementById("startButton");
+
+    let score = 0;
+    let time = 20;
+    let timer = null;
+    let gameRunning = false;
+
+    let bestScore =
+      Number(localStorage.getItem("fewbyBestScore")) || 0;
+
+    bestDisplay.textContent = bestScore;
+
+
+    function moveTarget() {
+
+      const areaWidth = gameArea.clientWidth;
+      const areaHeight = gameArea.clientHeight;
+
+      const targetWidth = target.offsetWidth;
+      const targetHeight = target.offsetHeight;
+
+      const maxX = areaWidth - targetWidth;
+      const maxY = areaHeight - targetHeight;
+
+      const randomX = Math.random() * maxX;
+      const randomY = Math.random() * maxY;
+
+      target.style.left = randomX + "px";
+      target.style.top = randomY + "px";
+    }
+
+
+    function endGame() {
+
+      gameRunning = false;
+
+      clearInterval(timer);
+
+      target.style.display = "none";
+
+      startButton.textContent = "Play Again";
+
+      message.textContent =
+        "Time's up! You scored " + score + ".";
+
+      if (score > bestScore) {
+
+        bestScore = score;
+
+        localStorage.setItem(
+          "fewbyBestScore",
+          bestScore
+        );
+
+        bestDisplay.textContent = bestScore;
+
+        message.textContent +=
+          " 🎉 New best score!";
+
+      }
+
+    }
+
+
+    target.addEventListener("click", function() {
+
+      if (!gameRunning) {
+        return;
+      }
+
+      score++;
+
+      scoreDisplay.textContent = score;
+
+      moveTarget();
+
+    });
+
+
+    startButton.addEventListener("click", function() {
+
+      if (gameRunning) {
+        return;
+      }
+
+      score = 0;
+      time = 20;
+
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = time;
+
+      gameRunning = true;
+
+      message.textContent =
+        "Go! Tap the glowing F!";
+
+      startButton.textContent =
+        "Game Running...";
+
+      target.style.display = "block";
+
+      moveTarget();
+
+      clearInterval(timer);
+
+      timer = setInterval(function() {
+
+        time--;
+
+        timeDisplay.textContent = time;
+
+        if (time <= 0) {
+          endGame();
+        }
+
+      }, 1000);
+
+    });
+
+  </script>
+
+</body>
+</html>
