@@ -1,331 +1,610 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fewby Tap Challenge</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fewby Chats</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#050a12;
+  color:white;
+}
+button,input,textarea{font:inherit}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: #07090c;
-      color: white;
-    }
+.app{
+  max-width:520px;
+  margin:auto;
+  min-height:100vh;
+  background:#07101b;
+  padding-bottom:75px;
+}
 
-    .container {
-      width: 100%;
-      max-width: 720px;
-      margin: auto;
-      padding: 20px;
-    }
+header{
+  padding:18px 18px 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  background:#07101b;
+  z-index:5;
+}
 
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
+.logo{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:23px;
+  font-weight:bold;
+}
 
-    .logo {
-      width: 55px;
-      height: 55px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #168cff, #18e879);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 34px;
-      font-weight: 900;
-      color: #071017;
-    }
+.logoIcon{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#168cff,#00e88b);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#07101b;
+  font-size:27px;
+  font-weight:900;
+}
 
-    h1 {
-      margin: 0;
-      font-size: 25px;
-    }
+.iconBtn{
+  background:#101c2a;
+  color:white;
+  border:1px solid #203247;
+  border-radius:12px;
+  width:42px;
+  height:42px;
+}
 
-    .subtitle {
-      color: #aeb8c4;
-      margin-top: 4px;
-    }
+.page{display:none;padding:10px 16px}
+.page.active{display:block}
 
-    .card {
-      background: #11161c;
-      border: 1px solid #25313d;
-      border-radius: 24px;
-      padding: 22px;
-    }
+.tabs{
+  display:flex;
+  gap:20px;
+  padding:8px 4px 15px;
+  border-bottom:1px solid #17283a;
+}
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 18px;
-    }
+.tabs button{
+  background:none;
+  border:0;
+  color:#8ea0b5;
+  font-weight:bold;
+}
 
-    .stat {
-      background: #0b1015;
-      border-radius: 16px;
-      padding: 14px;
-      text-align: center;
-    }
+.tabs button.active{color:white}
 
-    .stat strong {
-      display: block;
-      font-size: 25px;
-    }
+.storyRow{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  padding:15px 0;
+}
 
-    .stat span {
-      color: #9ba7b4;
-      font-size: 12px;
-    }
+.story{text-align:center;font-size:11px}
+.avatar{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #00e68a;
+  background:linear-gradient(135deg,#168cff,#00e88b);
+  margin-bottom:5px;
+}
 
-    #gameArea {
-      height: 360px;
-      position: relative;
-      background: radial-gradient(circle at 50% 30%, #10243a, #080b0f 70%);
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid #20313f;
-    }
+.card{
+  background:#0d1825;
+  border:1px solid #1d3043;
+  border-radius:18px;
+  margin:12px 0;
+  padding:15px;
+}
 
-    #target {
-      position: absolute;
-      width: 64px;
-      height: 64px;
-      border: none;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #168cff, #18e879);
-      box-shadow: 0 0 25px #168cffaa;
-      cursor: pointer;
-      display: none;
-      font-size: 30px;
-      font-weight: bold;
-      color: #061016;
-    }
+.postTop{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
-    #target:active {
-      transform: scale(0.9);
-    }
+.smallAvatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#178cff,#00e88b);
+}
 
-    .start {
-      width: 100%;
-      margin-top: 16px;
-      padding: 15px;
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(90deg, #168cff, #18e879);
-      color: #061016;
-      font-size: 17px;
-      font-weight: 800;
-      cursor: pointer;
-    }
+.postImage{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  border-radius:14px;
+  margin-top:12px;
+  background:linear-gradient(135deg,#102c4b,#06101c);
+}
 
-    #message {
-      text-align: center;
-      color: #c8d2dd;
-      margin: 12px 0 0;
-    }
+.actions{
+  display:flex;
+  justify-content:space-between;
+  padding-top:12px;
+  color:#b8c7d7;
+}
 
-    .footer {
-      text-align: center;
-      color: #778493;
-      font-size: 12px;
-      margin-top: 16px;
-    }
-  </style>
+.search{
+  width:100%;
+  background:#101d2b;
+  border:1px solid #22364b;
+  border-radius:13px;
+  padding:13px;
+  color:white;
+  margin:8px 0 15px;
+}
+
+.chips{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+}
+
+.chip{
+  white-space:nowrap;
+  background:#102033;
+  border:1px solid #24415d;
+  color:white;
+  border-radius:20px;
+  padding:9px 14px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.game{
+  background:#0d1927;
+  border:1px solid #20364c;
+  border-radius:16px;
+  padding:15px;
+  text-align:center;
+  min-height:150px;
+}
+
+.gameIcon{
+  font-size:48px;
+  margin:12px;
+}
+
+.primary{
+  width:100%;
+  border:0;
+  padding:14px;
+  border-radius:14px;
+  font-weight:bold;
+  background:linear-gradient(90deg,#168cff,#00e88b);
+  color:#03101b;
+}
+
+textarea{
+  width:100%;
+  min-height:130px;
+  background:#0b1623;
+  color:white;
+  border:1px solid #22374b;
+  border-radius:14px;
+  padding:15px;
+  resize:none;
+}
+
+.chat{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:15px 5px;
+  border-bottom:1px solid #182a3b;
+}
+
+.profileCover{
+  height:130px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#0757b9,#00d77f);
+}
+
+.profileInfo{
+  text-align:center;
+  margin-top:-40px;
+}
+
+.profileAvatar{
+  width:85px;
+  height:85px;
+  border-radius:50%;
+  border:4px solid #07101b;
+  background:linear-gradient(135deg,#168cff,#00e88b);
+}
+
+.stats{
+  display:flex;
+  justify-content:space-around;
+  text-align:center;
+  margin:18px 0;
+}
+
+.setting{
+  background:#0d1927;
+  border-bottom:1px solid #203247;
+  padding:18px 10px;
+  display:flex;
+  justify-content:space-between;
+  border-radius:10px;
+  margin:5px 0;
+}
+
+nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(520px,100%);
+  height:68px;
+  background:#09131f;
+  border-top:1px solid #1d3042;
+  display:flex;
+  justify-content:space-around;
+  z-index:10;
+}
+
+nav button{
+  background:none;
+  border:0;
+  color:#8194a8;
+  font-size:11px;
+}
+
+nav button.active{color:#00e88b}
+
+nav span{
+  display:block;
+  font-size:23px;
+  margin-bottom:3px;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="app">
 
-    <div class="header">
-      <div class="logo">F</div>
+<header>
+  <div class="logo">
+    <div class="logoIcon">F</div>
+    <span>Fewby <b>Chats</b></span>
+  </div>
+  <button class="iconBtn">🔔</button>
+</header>
 
-      <div>
-        <h1>Fewby Tap Challenge</h1>
-        <div class="subtitle">A Fewby Chats mini-game</div>
-      </div>
+<!-- HOME -->
+<section id="home" class="page active">
+
+<div class="tabs">
+  <button class="active">For You</button>
+  <button>Following</button>
+  <button>Videos</button>
+</div>
+
+<div class="storyRow">
+  <div class="story"><div class="avatar"></div>Add</div>
+  <div class="story"><div class="avatar"></div>Lily_23</div>
+  <div class="story"><div class="avatar"></div>king_mz</div>
+  <div class="story"><div class="avatar"></div>Bella</div>
+  <div class="story"><div class="avatar"></div>Thabo</div>
+</div>
+
+<div class="card">
+  <div class="postTop">
+    <div class="smallAvatar"></div>
+    <div>
+      <b>Zee_Official</b><br>
+      <small>2h ago · 🌍</small>
     </div>
-
-    <div class="card">
-
-      <div class="stats">
-
-        <div class="stat">
-          <strong id="score">0</strong>
-          <span>Score</span>
-        </div>
-
-        <div class="stat">
-          <strong id="time">20</strong>
-          <span>Seconds</span>
-        </div>
-
-        <div class="stat">
-          <strong id="best">0</strong>
-          <span>Best</span>
-        </div>
-
-      </div>
-
-      <div id="gameArea">
-        <button id="target">F</button>
-      </div>
-
-      <p id="message">
-        Press Start, then tap the glowing F as quickly as you can.
-      </p>
-
-      <button class="start" id="startButton">
-        Start Game
-      </button>
-
-      <div class="footer">
-        Fewby Chats • Play • Share • Enjoy
-      </div>
-
-    </div>
-
   </div>
 
-  <script>
+  <p>Good vibes only! ✨<br>
+  Life is better when you smile. 😊</p>
 
-    const gameArea = document.getElementById("gameArea");
-    const target = document.getElementById("target");
+  <div class="postImage"></div>
 
-    const scoreDisplay = document.getElementById("score");
-    const timeDisplay = document.getElementById("time");
-    const bestDisplay = document.getElementById("best");
+  <div class="actions">
+    <span>♡ 1.2K</span>
+    <span>💬 246</span>
+    <span>↗ 87</span>
+  </div>
+</div>
 
-    const message = document.getElementById("message");
-    const startButton = document.getElementById("startButton");
+</section>
 
-    let score = 0;
-    let time = 20;
-    let timer = null;
-    let gameRunning = false;
+<!-- DISCOVER -->
+<section id="discover" class="page">
 
-    let bestScore =
-      Number(localStorage.getItem("fewbyBestScore")) || 0;
+<h2>Discover</h2>
 
-    bestDisplay.textContent = bestScore;
+<input class="search" placeholder="🔎 Search people, videos, games...">
 
+<div class="chips">
+  <div class="chip">👤 People</div>
+  <div class="chip">▶️ Videos</div>
+  <div class="chip">🎮 Games</div>
+</div>
 
-    function moveTarget() {
+<div class="card">
+<h3>Trending People</h3>
+<div class="storyRow">
+  <div class="story"><div class="avatar"></div>Lily_23</div>
+  <div class="story"><div class="avatar"></div>king_mz</div>
+  <div class="story"><div class="avatar"></div>Bella</div>
+  <div class="story"><div class="avatar"></div>Thabo</div>
+</div>
+</div>
 
-      const areaWidth = gameArea.clientWidth;
-      const areaHeight = gameArea.clientHeight;
+<div class="card">
+<h3>Trending Videos</h3>
+<div class="grid">
+  <div class="postImage"></div>
+  <div class="postImage"></div>
+</div>
+</div>
 
-      const targetWidth = target.offsetWidth;
-      const targetHeight = target.offsetHeight;
+</section>
 
-      const maxX = areaWidth - targetWidth;
-      const maxY = areaHeight - targetHeight;
+<!-- CREATE -->
+<section id="create" class="page">
 
-      const randomX = Math.random() * maxX;
-      const randomY = Math.random() * maxY;
+<h2>Create</h2>
 
-      target.style.left = randomX + "px";
-      target.style.top = randomY + "px";
-    }
+<div class="card">
 
+<div class="chips">
+  <div class="chip">Post</div>
+  <div class="chip">Video</div>
+  <div class="chip">Photo</div>
+</div>
 
-    function endGame() {
+<br>
 
-      gameRunning = false;
+<textarea id="postText" placeholder="What's on your mind?"></textarea>
 
-      clearInterval(timer);
+<br><br>
 
-      target.style.display = "none";
+<button class="primary" onclick="makePost()">Post</button>
 
-      startButton.textContent = "Play Again";
+</div>
 
-      message.textContent =
-        "Time's up! You scored " + score + ".";
+</section>
 
-      if (score > bestScore) {
+<!-- CHATS -->
+<section id="chats" class="page">
 
-        bestScore = score;
+<h2>Chats</h2>
 
-        localStorage.setItem(
-          "fewbyBestScore",
-          bestScore
-        );
+<input class="search" placeholder="🔎 Search chats...">
 
-        bestDisplay.textContent = bestScore;
+<div class="chat">
+<div class="smallAvatar"></div>
+<div><b>Lily_23</b><br><small>How are you? 😊</small></div>
+</div>
 
-        message.textContent +=
-          " 🎉 New best score!";
+<div class="chat">
+<div class="smallAvatar"></div>
+<div><b>king_mz</b><br><small>😂 That's cool!</small></div>
+</div>
 
-      }
+<div class="chat">
+<div class="smallAvatar"></div>
+<div><b>Besties Group</b><br><small>See you later! 👋</small></div>
+</div>
 
-    }
+<div class="chat">
+<div class="smallAvatar"></div>
+<div><b>Bella</b><br><small>Voice message 🎤</small></div>
+</div>
 
+<div class="chat">
+<div class="smallAvatar"></div>
+<div><b>Thabo</b><br><small>You: Alright</small></div>
+</div>
 
-    target.addEventListener("click", function() {
+</section>
 
-      if (!gameRunning) {
-        return;
-      }
+<!-- GAMES -->
+<section id="games" class="page">
 
-      score++;
+<h2>Games 🎮</h2>
 
-      scoreDisplay.textContent = score;
+<div class="chips">
+  <div class="chip">All Games</div>
+  <div class="chip">Multiplayer</div>
+  <div class="chip">My Games</div>
+</div>
 
-      moveTarget();
+<br>
 
-    });
+<div class="grid">
 
+<div class="game">
+<div class="gameIcon">🎱</div>
+<b>8 Ball Pool</b>
+<p><small>Play with friends</small></p>
+</div>
 
-    startButton.addEventListener("click", function() {
+<div class="game">
+<div class="gameIcon">👾</div>
+<b>Among Us</b>
+<p><small>Find the impostor</small></p>
+</div>
 
-      if (gameRunning) {
-        return;
-      }
+<div class="game">
+<div class="gameIcon">🎲</div>
+<b>Ludo</b>
+<p><small>Classic & Online</small></p>
+</div>
 
-      score = 0;
-      time = 20;
+<div class="game">
+<div class="gameIcon">♟️</div>
+<b>Chess</b>
+<p><small>Challenge Friends</small></p>
+</div>
 
-      scoreDisplay.textContent = score;
-      timeDisplay.textContent = time;
+<div class="game">
+<div class="gameIcon">🃏</div>
+<b>UNO</b>
+<p><small>Card Game</small></p>
+</div>
 
-      gameRunning = true;
+<div class="game">
+<div class="gameIcon">♟️</div>
+<b>Carrom</b>
+<p><small>2-4 Players</small></p>
+</div>
 
-      message.textContent =
-        "Go! Tap the glowing F!";
+</div>
 
-      startButton.textContent =
-        "Game Running...";
+<br>
 
-      target.style.display = "block";
+<button class="primary">🎮 Play Now</button>
 
-      moveTarget();
+</section>
 
-      clearInterval(timer);
+<!-- PROFILE -->
+<section id="profile" class="page">
 
-      timer = setInterval(function() {
+<div class="profileCover"></div>
 
-        time--;
+<div class="profileInfo">
+<img class="profileAvatar" alt="">
+<h2>Thabile_99</h2>
+<p>@Thabile_99</p>
+</div>
 
-        timeDisplay.textContent = time;
+<div class="stats">
+<div><b>245</b><br><small>Posts</small></div>
+<div><b>1.8K</b><br><small>Followers</small></div>
+<div><b>312</b><br><small>Following</small></div>
+</div>
 
-        if (time <= 0) {
-          endGame();
-        }
+<div class="card">
+<b>Good vibes · Big dreams · South Africa 🇿🇦</b>
+<p>Let's connect! 💙</p>
+<button class="primary">Edit Profile</button>
+</div>
 
-      }, 1000);
+</section>
 
-    });
+<!-- SETTINGS -->
+<section id="settings" class="page">
 
-  </script>
+<h2>Settings</h2>
+
+<div class="card">
+
+<div class="setting">
+<span>👤 Account</span><span>›</span>
+</div>
+
+<div class="setting">
+<span>🔒 Privacy & Safety</span><span>›</span>
+</div>
+
+<div class="setting">
+<span>🔔 Notifications</span><span>›</span>
+</div>
+
+<div class="setting">
+<span>🚫 Blocked Users</span><span>›</span>
+</div>
+
+<div class="setting">
+<span>❓ Help & Support</span><span>›</span>
+</div>
+
+<div class="setting">
+<span>ℹ️ About Fewby Chats</span><span>›</span>
+</div>
+
+<div class="setting">
+<span>🚪 Log Out</span><span>›</span>
+</div>
+
+</div>
+
+</section>
+
+<nav>
+
+<button class="active" onclick="showPage('home',this)">
+<span>⌂</span>Home
+</button>
+
+<button onclick="showPage('discover',this)">
+<span>⌕</span>Discover
+</button>
+
+<button onclick="showPage('create',this)">
+<span>＋</span>Create
+</button>
+
+<button onclick="showPage('chats',this)">
+<span>💬</span>Chats
+</button>
+
+<button onclick="showPage('profile',this)">
+<span>👤</span>Profile
+</button>
+
+</nav>
+
+</div>
+
+<script>
+
+function showPage(page,button){
+
+document.querySelectorAll('.page')
+.forEach(p=>p.classList.remove('active'));
+
+document.getElementById(page)
+.classList.add('active');
+
+document.querySelectorAll('nav button')
+.forEach(b=>b.classList.remove('active'));
+
+button.classList.add('active');
+
+window.scrollTo(0,0);
+}
+
+function makePost(){
+
+const text=document.getElementById('postText').value;
+
+if(!text.trim()){
+alert('Write something first!');
+return;
+}
+
+alert('Your post was created!');
+
+document.getElementById('postText').value='';
+}
+
+</script>
 
 </body>
-</html>
+  </html>
